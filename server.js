@@ -185,17 +185,8 @@ app.use(myMiddleware)*/
 
 //var User   = require('./app/models/user'); // get our mongoose model
 
-
 Mongo.connect(config.db.url, function(err, db) {
 	require('./app/api')(api, db);
-
-	/*db.collection('userApps').findOne({}, (err, item) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(item);
-      }
-    });*/
 
 	api.listen(port, () => {
 		console.log('Magic happens at http://localhost:' + port);

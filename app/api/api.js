@@ -4,9 +4,14 @@ var _crypt = require('../packages/secure');
 var _bcrypt = require('bcrypt');
 var _random = require('meteor-random');
 
-var TokenManager    = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const SimpleSchema  = require("node-simple-schema");
+
+var db;
 
 module.exports = {
+	setup: function(database){
+		db = database;
+	},
 	generateRandomToken: function(){
 		return _random.secret();
 	},
@@ -23,7 +28,18 @@ module.exports = {
 		});
 	},
 	isValidAccess: function(headers){
-		if (typeof headers['opz-access-token'] === 'undefined' || typeof headers['opz-client-id'] === 'undefined' || typeof headers['opz-app-id'] === 'undefined')
-			return false;
+		return new Promise(function(resolve, reject){
+			if (!headers['x-access-token'] || !headers['x-user-id'] || !headers['x-app-id'])
+				resolve(false);
+
+			db.collection('userApps').findOne({'user_id': headers['x-user-id'], 'app_id': headers['x-app-id'], 'access_token': headers['x-access-token']}, (err, appItem) => {
+				if(err){ console.log(err); reject(err) };
+
+				if(appItem)
+					resolve(true);
+
+				resolve(false);
+			});
+		});
 	}
 }

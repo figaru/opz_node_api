@@ -21,6 +21,21 @@ RefreshSchema = new SimpleSchema({
 
 //--------------------- AUTH ROUTES ------------------
 module.exports = function(app, db) {
+  Api.setup(db);
+  app.get('/oauth/validate', (req, res) => {
+    console.log(req.headers);
+
+    Api.isValidAccess(req.headers).then(function(valid){
+      console.log(valid);
+      if(!valid) return res.status(401).send(response(401));
+
+      return res.status(200).send(response(200, "OK"));
+    }).catch(function(err){
+      console.log(err);
+      return res.status(500).send(response(500));
+    });
+    
+  });
   //########################## Authenticate ENDPOINT #####################################
   app.post('/oauth/authorize', (req, res) => {
     //check if params are valid
