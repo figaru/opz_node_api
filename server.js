@@ -27,6 +27,7 @@ var express 	= require('express');
 var api         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
+var timeout 	= require('connect-timeout'); //express v4 timeout
 //var db 		    = require('mongoose');
 var Mongo = require('mongodb').MongoClient;
 
@@ -186,8 +187,9 @@ app.use(myMiddleware)*/
 //var User   = require('./app/models/user'); // get our mongoose model
 
 Mongo.connect(config.db.url, function(err, db) {
-	require('./app/api')(api, db);
+	require('./app/api').setup(api, db);
 
+	//api.use(timeout(5000));
 	api.listen(port, () => {
 		console.log('Magic happens at http://localhost:' + port);
 	});
