@@ -1,5 +1,6 @@
 const authRoutes = require('./oauth');
 const userRoutes = require('./users');
+const logsRoutes = require('./logs');
 const middleware = require('./middleware');
 
 var _sha = require('../modules/sha256');
@@ -53,6 +54,7 @@ module.exports = {
 	  	//------------------------------
 	  	authRoutes(this);
 	  	userRoutes(this);
+	  	logsRoutes(this);
 	},
 	generateRandomToken: function(){
 		return _random.secret();

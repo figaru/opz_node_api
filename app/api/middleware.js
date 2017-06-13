@@ -21,13 +21,16 @@ module.exports = function(Api){
 		//GET
 		app.all('/users/current');//get  current user profile
 		app.all('/users/:id'); //get a specific users profile | ROLE VALIDATION REQUIRED
-		app.all('/users/current/logs');//get current user heartbeats
-		app.all('/users/:id/logs');//get current user heartbeats | ROLE VALIDATION REQUIRED
 		//POST
+		app.all('/users/current/heartbeat');//get current user heartbeats
 
-	app.all('/users/*', validateAccess);
-		app.all('/users/current'); 
-		app.all('/users/:id'); //implement validateRoles
+	//set all users endpoint to require validation
+	app.all('/logs/*', validateAccess);
+		//GET
+		app.all('/logs/current');//get  current user profile
+		app.all('/logs/:userid'); //get a specific users profile | ROLE VALIDATION REQUIRED
+		//POST
+		app.all('/logs/current/log/:logid/update', validateBody);//get current user heartbeats
 
 
 }
@@ -46,6 +49,14 @@ function validateAccess(req, res, next){
 				next();
 			}
 		});
+	}
+};
+
+function validateBody(req, res, next){
+	if (!req.body){
+		api.response(res, 400);
+	}else{
+		next();
 	}
 };
 
