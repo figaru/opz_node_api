@@ -31,6 +31,7 @@ module.exports = function(Api){
 		app.all('/logs/:userid'); //get a specific users profile | ROLE VALIDATION REQUIRED
 		//POST
 		app.all('/logs/current/log/:logid/update', validateBody);//get current user heartbeats
+		app.all('/logs/current/log/bulk/update', validateBody);//get current user heartbeats
 
 
 }

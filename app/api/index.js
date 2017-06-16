@@ -88,5 +88,18 @@ module.exports = {
 		}	
 		return res.status(code).json(resp);
 	},
+	scheduleTrain: (db, user_id) => {
+		db.collection('aiQueue').update(
+		   	{"user": user_id },
+		   	{"$set": {"user": user_id, "date": new Date()}},
+		   	{"upsert": true},
+		   	function(err, result) {
+	     		if(err){console.log(err)}
+	     		else{
+	     			console.log(result);
+	     		}
+	   		}
+		);
+	}
 
 };

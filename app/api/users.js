@@ -64,28 +64,6 @@ var Users = {
 	    	api.response(res, 200, user.profile); 
 	    });
 	},
-	getLogs: (res, user_id, date) => {
-		//retrieve heartbeats for date range
-	    db.collection('userLogs').aggregate([
-	        {
-	            $match:{
-	                user:   user_id,
-	                createDate:{
-	                    $gte: new Date(date.start),
-	                    $lt: new Date(date.end),
-	                },
-	                //Only get logs with +1 second of time.
-	                totalTime:{
-	                        $gt: 5
-	                },
-	            }
-	        },
-		], function(err, results){
-			if(err){ api.response(res, 500) };
-			
-			api.response(res, 200, results);
-		});
-	},
 	createLog: (res, user_id, heartbeat) => {
 		//console.log(heartbeat);
 		//Get user based on received token

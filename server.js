@@ -9,7 +9,9 @@ const bodyParser 	= require('body-parser');
 //http request logger
 const morgan		= require('morgan');
 //get mongo plugin
-const Mongo 		= require('mongodb').MongoClient;
+const MongoClient 	= require('mongodb').MongoClient;
+const MongoDb 		= require('mongodb').Db;
+const MongoServer	= require('mongodb').Server;
 
 //system config file
 const config 		= require('./config'); // get our config file
@@ -30,7 +32,7 @@ api.use(morgan('dev'));
 // =================================================================
 // SERVER ==========================================================
 // =================================================================
-Mongo.connect(config.db.url, function(err, db) {
+MongoClient.connect(config.db.url, function(err, db) {
 	if(db){
 		//connected to DB -> setup api index
 		require('./app/api').setup(api, db);
@@ -44,7 +46,6 @@ Mongo.connect(config.db.url, function(err, db) {
 	}
 	
 });
-
 
 /*var debug = true;
 
