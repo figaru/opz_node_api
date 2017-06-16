@@ -39,10 +39,12 @@ const codeReason = {
 module.exports = {
 	server: null,
 	db: null,
-	setup: function(server, db){
+	parent: null,
+	setup: function(server, db, parent){
 		//API GLOBAL CONSTANTS
 		this.server = server;
 		this.db = db;
+		this.parent = parent;
 		
 		//------------------------------
 		// MIDDLEWARE
@@ -88,8 +90,10 @@ module.exports = {
 		}	
 		return res.status(code).json(resp);
 	},
-	scheduleTrain: (db, user_id) => {
-		db.collection('aiQueue').update(
+	scheduleTrain: (parent, user_id) => {
+		console.log(parent);
+		parent.create(user_id);
+		/*db.collection('queueAI').update(
 		   	{"user": user_id },
 		   	{"$set": {"user": user_id, "date": new Date()}},
 		   	{"upsert": true},
@@ -99,7 +103,7 @@ module.exports = {
 	     			console.log(result);
 	     		}
 	   		}
-		);
+		);*/
 	}
 
 };

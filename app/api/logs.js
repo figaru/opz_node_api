@@ -116,7 +116,7 @@ var Logs = {
 		   	function(err, result) {
 	     		if(err){api.response(res, 500, err);}
 	     		else{
-	     			api.scheduleTrain(user_id);
+	     			api.scheduleTrain(api.parent,user_id);
 	     			api.response(res, 200, result);
 	     		}
 	   		}
@@ -143,7 +143,7 @@ var Logs = {
 		    bulk.execute(function (err, result) {
 		        if(err){api.response(res, 500, err);}
 		        else{
-		        	api.scheduleTrain(db, user_id);
+		        	api.scheduleTrain(api.parent, user_id);
 		        	api.response(res, 200, result);
 		        }
 		    });

@@ -8,6 +8,7 @@
     "connect-timeout": "^1.9.0",
     "express": "^4.13.4",
     "jsonwebtoken": "^5.7.0",
+    "kue": "^0.11.6",
     "meteor-random": "0.0.3",
     "mongodb-queue": "^3.1.0",
     "mongoose": "^4.10.5",
