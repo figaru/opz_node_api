@@ -32,8 +32,8 @@ api.use(morgan('dev'));
 // =================================================================
 // CONNECT PARENT SERVER ===========================================
 // =================================================================
-const parent = require('./app/tcp/client');
-parent.connect();
+const ai_server = require('./app/tcp/client');
+ai_server.connect();
 
 // =================================================================
 // CREATE API SERVER ===============================================
@@ -47,7 +47,7 @@ MongoClient.connect(config.db.url, function(err, db) {
 		db.createCollection("userApps");
 
 		//connected to DB -> setup api index
-		require('./app/api').setup(api, db, parent);
+		require('./app/api').setup(api, db, ai_server);
 
 		//start listening
 		api.listen(port, () => {

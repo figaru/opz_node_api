@@ -39,12 +39,12 @@ const codeReason = {
 module.exports = {
 	server: null,
 	db: null,
-	parent: null,
-	setup: function(server, db, parent){
+	ai_server: null,
+	setup: function(server, db, ai_server){
 		//API GLOBAL CONSTANTS
 		this.server = server;
 		this.db = db;
-		this.parent = parent;
+		this.ai_server = ai_server;
 		
 		//------------------------------
 		// MIDDLEWARE
@@ -90,20 +90,8 @@ module.exports = {
 		}	
 		return res.status(code).json(resp);
 	},
-	scheduleTrain: (parent, user_id) => {
-		console.log(parent);
-		parent.create(user_id);
-		/*db.collection('queueAI').update(
-		   	{"user": user_id },
-		   	{"$set": {"user": user_id, "date": new Date()}},
-		   	{"upsert": true},
-		   	function(err, result) {
-	     		if(err){console.log(err)}
-	     		else{
-	     			console.log(result);
-	     		}
-	   		}
-		);*/
+	scheduleTrain: (ai_server, user_id) => {
+		ai_server.create(user_id);
 	}
 
 };
