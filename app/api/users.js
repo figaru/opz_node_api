@@ -96,15 +96,10 @@ var Users = {
 							'logHour': {
 								$gte: new Date(currentHour)
 							},
-							'entity': heartbeat.entity,
-							'type': heartbeat.type,
+							'title': heartbeat.title,
+							'uri': heartbeat.uri,
+							'domain': heartbeat.domain,
 							'plugin': heartbeat.plugin,
-						};
-
-						var update = {
-							'$set':{
-								'updateDate': new Date()
-							}
 						};
 
 						var insert = {
@@ -116,43 +111,54 @@ var Users = {
 							'domain': heartbeat.domain,
 							'plugin': heartbeat.plugin,
 							'createDate': new Date(),
-							'updateDate': new Date(),
 							'logHour': new Date(currentHour),
-							'project': {},
 							'matchedProjects': [],
 							'private': true,
 							'validated': false,
 							'classified': false,
 							'relatedLog': "",
-							'totalTime': 0,
-							'idleTime': 0,
 							'billed': false,
 							'hourRate': 0
 								//'viewable': true
 						}
 
+						var update = {
+							'$set':{
+								'updateDate': new Date()
+							},
+							'$setOnInsert': insert
+						};
+
 						if(diff < 60*2){
-							insert['totalTime'] = diff;
 							update['$inc'] = { 'totalTime': diff };
 						}else{
-							insert['idleTime'] = diff;
 							update['$inc'] = { 'idleTime': diff };
 						}
 
 						//console.log(updatePipeline);
-						var Logs = db.collection('logs');
-						Logs.findOne(matchQuery, function(err, item){
-							if(!item){
-								Logs.insert(insert, function(err, data){
-									//console.log(data);
-								});
-							}else{
-								var id = Logs.update({_id: item._id}, update, function(err, data){
-									//console.log(data);
-								});
+					classifyLog(user._id, heartbeat).then(function(result){
+						update['$set'] = {
+							'updateDate': new Date(),
+							'project': result,
+						};
+
+						db.collection('logs').update(
+							matchQuery, 
+							update,
+							{upsert: true},
+							function(err, data){
+								if(err){ console.log(err);}
+								else{
+									console.log("Heartbeat saved!");
+									api.response(res, 201);
+								}
+								
 							}
-							api.response(res, 201);
-						});
+						);
+						// }
+					});
+
+					
 						//api.response(res, 201);
 
 					}else{
@@ -165,5 +171,22 @@ var Users = {
 	    	
 			
 	    });
-	}
+	},
+}
+
+var classifyLog = function(userid, beat){
+	return new Promise(function(resolve, reject){
+		db.collection('userAI').findOne({user: userid}, function(err, obj){
+			if(err){reject();}
+			else{
+				var NaturalSynaptic = require('natural-synaptic');	
+				var nnJson = JSON.parse(obj.network);
+				var NN = NaturalSynaptic.fromJSON(nnJson, null);
+
+				var result = NN.classify(beat.title + " " + beat.uri);
+				
+				resolve(result);
+			}
+		});
+	});
 }
