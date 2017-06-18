@@ -22,13 +22,9 @@ module.exports = function(Api){
   	api = Api;
 
   	//---------------- PROFILE ----------------
-  	app.get('/users/current', (req, res) => {
-  		var user_id = req.headers['x-user-id'];
-	    //get user profile
-	    Users.getProfile(res, user_id);
-  	});
-  	app.get('/users/:id', (req, res) => {
-  		var user_id = req.params.id;
+  	app.get('/users/:userid', (req, res) => {
+  		var user_id = req.params.userid;
+  		console.log(user_id);
 	    //get user profile
 	    Users.getProfile(res, user_id);
   	});
@@ -36,7 +32,7 @@ module.exports = function(Api){
 
   	//---------------- HEARTBEATS ---------------
   	//POST
-  	app.post('/users/current/heartbeat', (req, res) => {
+  	app.post('/users/:userid/heartbeat', (req, res) => {
   		var user_id = req.headers['x-user-id'];
   		var body = req.body;
 
@@ -73,6 +69,7 @@ var Users = {
 	    	if(!user){
 	    		api.response(res, 404);
 	    	}else{
+	    		updateUserTracker(user, heartbeat);
 		    	//TODO: get user that is also set as active (not deleted or deactivated by organization admin)
 				//Get or Update user tracking settings, then pass to queue accordingly
 				//var proceed = updateUserTracker(user, heartbeat);
@@ -189,4 +186,76 @@ var classifyLog = function(userid, beat){
 			}
 		});
 	});
+}
+
+var updateUserTracker = function(user, heartbeat){
+	if(!user.profile.hasTracker){
+		console.log('update trackers for ' + user._id)
+		db.collection('users').update({
+			_id: user._id
+		},
+		{
+			$set:{
+				'profile.hasTracker': true
+			}
+		});
+	}
+	else{
+		db.collection('users').findOne({
+			_id: user._id,
+			'trackers.tracker': heartbeat.plugin,
+		}, function(err, userObj){
+			if(userObj){
+				var trackerSetting = userObj.trackers.filter(function( obj ) {
+					return obj.tracker === heartbeat.plugin;
+				});
+
+				if(trackerSetting.length > 0){
+					if(trackerSetting[0].active){
+						db.collection('users').update({
+							_id: user._id,
+							'trackers.tracker': heartbeat.plugin,
+						},
+						{
+							$set:{
+								'trackers.$.updateDate': new Date(),
+							}
+						});
+					}
+				}
+				else{
+					db.collection('users').update({
+						_id: user._id,
+					},
+					{
+						$push:{
+							'trackers':{
+								'tracker':	heartbeat.plugin,
+								'updateDate': new Date(),
+								'createDate': new Date(),
+								'active': true
+							}
+						}
+					});
+				}
+
+			}
+			else{
+				db.collection('users').update({
+					_id: user._id,
+				},
+				{
+					$push:{
+						'trackers':{
+							'tracker':	heartbeat.plugin,
+							'updateDate': new Date(),
+							'createDate': new Date(),
+							'active': true
+						}
+					}
+				});
+			}
+		});
+
+	}
 }

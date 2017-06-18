@@ -17,24 +17,27 @@ module.exports = function(Api){
 	// ---------------------------------------------------------
 
 	//set all users endpoint to require validation
-	app.all('/users/*', validateAccess);
+	app.all('/users/*', validateAccess, handleCurrent);
+		//USER DETAILS
 		//GET
-		app.all('/users/current');//get  current user profile
-		app.all('/users/:id'); //get a specific users profile | ROLE VALIDATION REQUIRED
+		app.all('/users/:userid'); //get a specific users profile | ROLE VALIDATION REQUIRED
 		//POST
-		app.all('/users/current/heartbeat');//get current user heartbeats
+		app.all('/users/:userid/heartbeat');//get current user heartbeats
 
-	//set all users endpoint to require validation
-	app.all('/logs/*', validateAccess);
+		//USER LOGS
 		//GET
-		app.all('/logs/current');//get  current user profile
-		app.all('/logs/:userid'); //get a specific users profile | ROLE VALIDATION REQUIRED
-		//POST
-		app.all('/logs/current/log/:logid/update', validateBody);//get current user heartbeats
-		app.all('/logs/current/log/bulk/update', validateBody);//get current user heartbeats
+		app.all('users/:userid/logs'); //get a specific users profile | ROLE VALIDATION REQUIRED
+		//PATCH
+		app.all('/users/:userid/logs/:logid/update', validateBody);//get current user heartbeats
+		app.all('/users/:userid/logs/update', validateBody);//get current user heartbeats
 
 
 }
+
+function handleCurrent(req, res, next){
+	req.url = req.url.replace("current", req.headers['x-user-id']);
+	next();
+};
 
 function validateAccess(req, res, next){
 	if (!req.headers['x-access-token'] || !req.headers['x-user-id'] || !req.headers['x-app-id']){

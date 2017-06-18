@@ -29,20 +29,8 @@ module.exports = function(Api){
   	api = Api;
 
   	//GET
-  	//get todays logs for current user
-  	app.get('/logs/current', (req, res) => {
-  		var user_id = req.headers['x-user-id'];
-  		var date = Dates.todayRange(); 
-
-  		if(req.query.date){
-  			date = Dates.dateRange(req.query.date);
-  		}
-
-  		//get user logs -> date range 
-	    Logs.getLogs(res, user_id, date);
-  	});
   	//get todays logs for specific user
-  	app.get('/logs/:userid', (req, res) => {
+  	app.get('/users/:userid/logs', (req, res) => {
   		var user_id = req.params.userid;
   		var date = Dates.todayRange();
 
@@ -56,8 +44,8 @@ module.exports = function(Api){
 
   	//PATCH UPDATES
   	//update log -> project, etc
-  	app.patch('/logs/current/log/:logid/update', (req, res) => {
-  		var user_id = req.headers['x-user-id'];
+  	app.patch('/users/:userid/logs/:logid/update', (req, res) => {
+  		var user_id = req.params.userid;
   		var log_id = req.params.logid;
   		var body = req.body;
 
@@ -70,8 +58,8 @@ module.exports = function(Api){
 			api.response(res, 400);
 		}
   	});
-  	app.patch('/logs/current/bulk/update', (req, res) => {
-  		var user_id = req.headers['x-user-id'];
+  	app.patch('/users/:userid/logs/update', (req, res) => {
+  		var user_id = req.params.userid;
   		var body = req.body;
 
 		if(body.logs) {
