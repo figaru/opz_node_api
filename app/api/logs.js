@@ -19,15 +19,20 @@ BulkLogUpdateSchema = new Schema({
 }, { requiredByDefault: true });
 
 const Dates = require('./../modules/dates');
+
+//job manager
+const Job = require('./../jobs');
+
 var api;
 var app;
 var db;
+var job;
 
 module.exports = function(Api){
 	app = Api.server;
   	db = Api.db;
   	api = Api;
-
+  	job = Api.job;
   	//GET
   	//get todays logs for specific user
   	app.get('/users/:userid/logs', (req, res) => {
@@ -104,7 +109,8 @@ var Logs = {
 		   	function(err, result) {
 	     		if(err){api.response(res, 500, err);}
 	     		else{
-	     			api.scheduleTrain(api.ai_server,user_id);
+	     			job.createJob(user_id);
+	     			//api.scheduleTrain(api.ai_server,user_id);
 	     			api.response(res, 200, result);
 	     		}
 	   		}
@@ -131,7 +137,8 @@ var Logs = {
 		    bulk.execute(function (err, result) {
 		        if(err){api.response(res, 500, err);}
 		        else{
-		        	api.scheduleTrain(api.ai_server, user_id);
+		        	job.createJob(user_id);
+		        	//api.scheduleTrain(api.ai_server, user_id);
 		        	api.response(res, 200, result);
 		        }
 		    });

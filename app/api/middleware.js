@@ -17,7 +17,7 @@ module.exports = function(Api){
 	// ---------------------------------------------------------
 
 	//set all users endpoint to require validation
-	app.all('/users/*', validateAccess, handleCurrent);
+	app.all('/users/*', validateAccess);
 		//USER DETAILS
 		//GET
 		app.all('/users/:userid'); //get a specific users profile | ROLE VALIDATION REQUIRED
@@ -35,11 +35,13 @@ module.exports = function(Api){
 }
 
 function handleCurrent(req, res, next){
+	console.log(req.headers);
 	req.url = req.url.replace("current", req.headers['x-user-id']);
 	next();
 };
 
 function validateAccess(req, res, next){
+	console.log(req.headers);
 	if (!req.headers['x-access-token'] || !req.headers['x-user-id'] || !req.headers['x-app-id']){
 		api.response(res, 401);
 	}else{
@@ -50,6 +52,7 @@ function validateAccess(req, res, next){
 			if(!appItem){
 				api.response(res, 401);
 			}else{
+				req.url = req.url.replace("current", req.headers['x-user-id']);
 				next();
 			}
 		});

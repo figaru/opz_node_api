@@ -12,6 +12,7 @@ HeartbeatSchema = new Schema({
 });
 
 const Dates = require('./../modules/dates');
+
 var api;
 var app;
 var db;
@@ -169,23 +170,6 @@ var Users = {
 			
 	    });
 	},
-}
-
-var classifyLog = function(userid, beat){
-	return new Promise(function(resolve, reject){
-		db.collection('userAI').findOne({user: userid}, function(err, obj){
-			if(err){reject();}
-			else{
-				var NaturalSynaptic = require('natural-synaptic');	
-				var nnJson = JSON.parse(obj.network);
-				var NN = NaturalSynaptic.fromJSON(nnJson, null);
-
-				var result = NN.classify(beat.title + " " + beat.uri);
-				
-				resolve(result);
-			}
-		});
-	});
 }
 
 var updateUserTracker = function(user, heartbeat){

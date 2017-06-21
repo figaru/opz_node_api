@@ -12,6 +12,7 @@
     "meteor-random": "0.0.3",
     "mongodb-queue": "^3.1.0",
     "mongoose": "^4.10.5",
+    "monq": "^0.3.7",
     "morgan": "^1.8.2",
     "natural-synaptic": "^1.0.1",
     "node-simple-schema": "0.0.4",

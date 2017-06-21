@@ -40,12 +40,14 @@ const codeReason = {
 module.exports = {
 	server: null,
 	db: null,
+	job: null,
 	ai_server: null,
-	setup: function(server, db, ai_server){
+	setup: function(server, db, job){
 		//API GLOBAL CONSTANTS
 		this.server = server;
 		this.db = db;
-		this.ai_server = ai_server;
+		this.job = job;
+		//this.ai_server = ai_server;
 		
 		//------------------------------
 		// MIDDLEWARE

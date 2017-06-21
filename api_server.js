@@ -30,11 +30,12 @@ api.use(bodyParser.text());
 api.use(morgan('dev'));
 
 // =================================================================
-// CONNECT PARENT SERVER ===========================================
+// Setup jobs Manager  =============================================
 // =================================================================
-const ai_server = require('./app/tcp/client');
-ai_server.connect();
-
+/*const ai_server = require('./app/tcp/client');
+ai_server.connect();*/
+//job manager
+const Job = require('./app/jobs');
 // =================================================================
 // CREATE API SERVER ===============================================
 // =================================================================
@@ -42,12 +43,13 @@ MongoClient.connect(config.db.url, function(err, db) {
 	if(db){
 		//SETUP COLLECTIONS
 		db.createCollection("logs");
-		db.createCollection("queueAI");
 		db.createCollection("userAI");
 		db.createCollection("userApps");
 
+		Job.init(db);
+
 		//connected to DB -> setup api index
-		require('./app/api').setup(api, db, ai_server);
+		require('./app/api').setup(api, db, Job);
 
 		//start listening
 		api.listen(port, () => {
