@@ -1,5 +1,5 @@
 var monq = require('monq');
-var client = monq('mongodb://opzioAdmin:teamopz@5.158.32.213:27017/meteor?authSource=admin');
+var client = monq('mongodb://opzioAdmin:teamopz@teleplanet.ddns.net:27017/meteor?authSource=admin');
 const Ai = require('./app/ai');
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
@@ -11,7 +11,7 @@ var db;
 //--------------------------------------------------------
 // START AI MAIN
 //--------------------------------------------------------
-MongoClient.connect("mongodb://opzioAdmin:teamopz@5.158.32.213:27017/meteor?authSource=admin", function(err, database) {
+MongoClient.connect("mongodb://opzioAdmin:teamopz@teleplanet.ddns.net:27017/meteor?authSource=admin", function(err, database) {
     db = database;
 
     var worker = client.worker(['AI']);

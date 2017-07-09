@@ -15,12 +15,13 @@ const MongoServer	= require('mongodb').Server;
 
 //system config file
 const config = require('./config'); // get our config file
+var args = process.argv.splice(2);
 
 // =================================================================
 // CONFIGURATION ===================================================
 // =================================================================
 //setup server listening port
-var port = process.env.PORT || 3030;
+var port = args[0] || 8010; // 8011
 
 // use body parser so we can get info from POST and/or URL parameters
 api.use(bodyParser.urlencoded({ extended: false }));
@@ -35,6 +36,7 @@ api.use(morgan('dev'));
 /*const ai_server = require('./app/tcp/client');
 ai_server.connect();*/
 //job manager
+
 const Job = require('./app/jobs');
 // =================================================================
 // CREATE API SERVER ===============================================
@@ -45,6 +47,7 @@ MongoClient.connect(config.db.url, function(err, db) {
 		db.createCollection("logs");
 		db.createCollection("userAI");
 		db.createCollection("userApps");
+
 
 		Job.init(db);
 
@@ -60,6 +63,11 @@ MongoClient.connect(config.db.url, function(err, db) {
 	}
 	
 });
+
+/*api.listen(port, () => {
+	console.log('Opzio Api server hosted at http://localhost:' + port);
+});
+*/
 
 /*var debug = true;
 
